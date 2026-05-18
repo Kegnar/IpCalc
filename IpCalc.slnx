@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="IpCalc/IpCalc.csproj" />
+  <Project Path="IPTest/IPTest.csproj" Id="3f7ea482-0952-4fed-8d68-f2505f02271a" />
 </Solution>
