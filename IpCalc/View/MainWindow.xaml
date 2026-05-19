@@ -4,6 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IpCalc"
+        xmlns:localcmd="clr-namespace:IpCalc.Commands"
+        xmlns:i="http://microsoft.com"
+        
         xmlns:vm="clr-namespace:IpCalc.ViewModel"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="Калькулятор IP" 
@@ -49,12 +52,48 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!--#endregion-->
+        
         <!--#region 0 Зона перетаскивания -->
         <Grid Grid.Row="0" 
               Grid.Column="0" 
-              Grid.ColumnSpan="3" 
-              
-              shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
+              Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Background="Transparent" shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+
+                <!-- Свернуть -->
+                <Button Content="0" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <localcmd:MinimizeWindowAction/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+
+                <!-- Развернуть -->
+                <Button Content="1" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <localcmd:MaximizeWindowAction/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+
+                <!-- Закрыть -->
+                <Button Content="r" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <localcmd:CloseWindowAction/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+
+            </StackPanel>
+        </Grid>
+
         <!--#endregion-->
 
         <!--#region 1 Заголовок -->
@@ -79,7 +118,7 @@
                 <ColumnDefinition Width="173"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox  Grid.Column="0"/>
+            <TextBox  Grid.Column="0" InputScope="Url"/>
         </Grid>
         <!--#endregion-->
 
