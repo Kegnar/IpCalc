@@ -5,30 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IpCalc"
         xmlns:vm="clr-namespace:IpCalc.ViewModel"
-        Title="MainWindow" Height="450" Width="500"
-        ResizeMode="CanMinimize"
+        Title="Калькулятор IP" 
+        Height="450" 
+        Width="500"
+        AllowsTransparency="False"
+        WindowStyle="None"
         >
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            CaptionHeight="32"
+            ResizeBorderThickness="4"
+            GlassFrameThickness="0"
+            UseAeroCaptionButtons="False"
+            />
+    </WindowChrome.WindowChrome>
+        
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
-    <Grid ShowGridLines="False">
+    <Grid>
+        
+        <!--#region GLOBAL MARKUP DON'T MODIFY -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
             <RowDefinition Height="76"/>
             <RowDefinition Height="32"/>
             <RowDefinition Height="32"/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="Калькулятор IP" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,32,0,0"/>
+        <!--#endregion-->
         
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="IP"  Style="{StaticResource BodyStrongTextBlockStyle}"/>
-        <TextBox Grid.Row="2" Grid.Column="1"/>
-        <TextBlock Grid.Row="3" Grid.Column="1" Text="Маска" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Калькулятор IP" Style="{StaticResource SubtitleTextBlockStyle}"/>
+        
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="IP"  Style="{StaticResource BodyStrongTextBlockStyle}"/>
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="173"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox  Grid.Column="0"/>
+        </Grid>
+        
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="Маска" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+        <Grid Grid.Row="4" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="153"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox  Grid.Column="0"/>
+        </Grid>
 
-       
+
     </Grid>
 </Window>
