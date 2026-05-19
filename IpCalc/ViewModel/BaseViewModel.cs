@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace IpCalc.ViewModel;
 
-public class BaseViewModel:INotifyPropertyChanged
+public abstract class BaseViewModel:INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -19,4 +19,6 @@ public class BaseViewModel:INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
+
+    
 }
