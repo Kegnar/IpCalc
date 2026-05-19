@@ -5,24 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IpCalc"
         xmlns:vm="clr-namespace:IpCalc.ViewModel"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="Калькулятор IP" 
         Height="450" 
         Width="500"
         AllowsTransparency="False"
         WindowStyle="None"
+        ResizeMode="CanResize"
         >
     <WindowChrome.WindowChrome>
         <WindowChrome
             CaptionHeight="32"
             ResizeBorderThickness="4"
-            GlassFrameThickness="0"
-            UseAeroCaptionButtons="False"
+            GlassFrameThickness="-1"
+            CornerRadius="0"
             />
     </WindowChrome.WindowChrome>
         
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
+  
     <Grid>
         
         <!--#region GLOBAL MARKUP DON'T MODIFY -->
@@ -32,36 +35,71 @@
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="76"/>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="32"/>    <!--0 Зона перетаскивания-->
+            <RowDefinition Height="32"/>    <!--1 Заголовок-->
+            <RowDefinition Height="24"/>    <!--2 Интервал-->
+            <RowDefinition Height="20"/>    <!--3 Текст IP-->
+            <RowDefinition Height="12"/>    <!--4 Интервал-->
+            <RowDefinition Height="32"/>    <!--5 Поле для IP-->
+            <RowDefinition Height="12"/>    <!--6 Интервал-->
+            <RowDefinition Height="20"/>    <!--7 Текст Маска-->
+            <RowDefinition Height="12"/>    <!--8 Интервал-->
+            <RowDefinition Height="32"/>    <!--9 Поле маски-->
+            
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!--#endregion-->
-        
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="Калькулятор IP" Style="{StaticResource SubtitleTextBlockStyle}"/>
-        
-        <TextBlock Grid.Row="2" Grid.Column="1" Text="IP"  Style="{StaticResource BodyStrongTextBlockStyle}"/>
-        <Grid Grid.Row="2" Grid.Column="1">
+        <!--#region 0 Зона перетаскивания -->
+        <Grid Grid.Row="0" 
+              Grid.Column="0" 
+              Grid.ColumnSpan="3" 
+              
+              shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
+        <!--#endregion-->
+
+        <!--#region 1 Заголовок -->
+        <TextBlock Grid.Row="1" 
+                   Grid.Column="1" 
+                   Text="Калькулятор IP" 
+                   Style="{StaticResource SubtitleTextBlockStyle}"
+                   />
+        <!--#endregion-->
+
+        <!--#region 3 Текст IP -->
+        <TextBlock Grid.Row="3" 
+                   Grid.Column="1" 
+                   Text="IP"  
+                   Style="{StaticResource BodyStrongTextBlockStyle}"
+                   />
+        <!--#endregion-->
+
+        <!--#region 5 Поле для IP -->
+        <Grid Grid.Row="5" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="173"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBox  Grid.Column="0"/>
         </Grid>
-        
-        <TextBlock Grid.Row="4" Grid.Column="1" Text="Маска" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-        <Grid Grid.Row="4" Grid.Column="1">
+        <!--#endregion-->
+
+        <!--#region 7 Текст Маска -->
+        <TextBlock Grid.Row="7" 
+                   Grid.Column="1" 
+                   Text="Маска" 
+                   Style="{StaticResource BodyStrongTextBlockStyle}"
+        />
+        <!--#endregion-->
+
+        <!--#region 9 Поле маски -->
+        <Grid Grid.Row="9" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="153"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBox  Grid.Column="0"/>
         </Grid>
+        <!--#endregion-->
 
 
     </Grid>
