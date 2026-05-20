@@ -75,7 +75,7 @@
               shell:WindowChrome.IsHitTestVisibleInChrome="True">
 
 
-            <!--#region Стили кнопок -->
+            <!--#region Стили кнопок-->
             <Grid.Resources>
 
                 <!-- Базовый стиль для всех кнопок управления -->
@@ -130,7 +130,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!--#region Кнопки управления окном -->
+            <!--#region Кнопки управления окном. Используют функционал Microsoft.Xaml.Behaviors.Wpf -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True" >
 
                 <!-- Свернуть -->
@@ -192,7 +192,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBox  Grid.Column="0" Width="173" HorizontalAlignment="Left" />
-            <TextBlock Grid.Column="1" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Column="1" Text="{Binding BinaryIp}"/>
         </Grid>
         <!--#endregion-->
 
@@ -211,12 +211,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" Width="153" HorizontalAlignment="Left"/>
-            <TextBlock Grid.Column="1" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Column="1" Text="{Binding BinaryMask}"/>
         </Grid>
         <!--#endregion-->
 
         <!--#region Инфа о сети -->
+
         <Grid Grid.Row="11" Grid.Column="1">
+
+            <!--#region Разметка -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="8"/>
@@ -237,18 +240,20 @@
                 <RowDefinition Height="12"/>
 
             </Grid.RowDefinitions>
+            <!--#endregion-->
+
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Адрес сети:"/>
-            <TextBlock Grid.Row="0" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NetworkAddr}"/>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Широковещательный адрес:"/>
-            <TextBlock Grid.Row="2" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BroadcastAddr}"/>
             <TextBlock Grid.Row="4" Grid.Column="0" Text="Начальный адрес:"/>
-            <TextBlock Grid.Row="4" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding StartAddr}"/>
             <TextBlock Grid.Row="6" Grid.Column="0" Text="Конечный адрес:"/>
-            <TextBlock Grid.Row="6" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding EndAddr}"/>
             <TextBlock Grid.Row="8" Grid.Column="0" Text="Количество хостов:"/>
-            <TextBlock Grid.Row="8" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding HostCount}"/>
             <TextBlock Grid.Row="10" Grid.Column="0" Text="Класс сети:"/>
-            <TextBlock Grid.Row="10" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding NetworkClass}"/>
         </Grid>
         <!--#endregion-->
 
