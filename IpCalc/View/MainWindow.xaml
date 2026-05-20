@@ -3,12 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:IpCalc.ViewModel"
+        
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:IpCalc"
         xmlns:localcmd="clr-namespace:IpCalc.Commands"
-        xmlns:i="http://microsoft.com"
-        
-        xmlns:vm="clr-namespace:IpCalc.ViewModel"
-        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="Калькулятор IP" 
         Height="450" 
         Width="500"
@@ -16,6 +16,7 @@
         WindowStyle="None"
         ResizeMode="CanResize"
         >
+    <!--Модное окошко-->
     <WindowChrome.WindowChrome>
         <WindowChrome
             CaptionHeight="32"
@@ -24,75 +25,144 @@
             CornerRadius="0"
             />
     </WindowChrome.WindowChrome>
-        
+
+    <!--Класс, описывающий поведение элементов окна-->
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
-  
+
     <Grid>
-        
-        <!--#region GLOBAL MARKUP DON'T MODIFY -->
+
+        <!--#region Глобальная разметка. Не трогать без необходимости! -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>    <!--0 Зона перетаскивания-->
-            <RowDefinition Height="32"/>    <!--1 Заголовок-->
-            <RowDefinition Height="24"/>    <!--2 Интервал-->
-            <RowDefinition Height="20"/>    <!--3 Текст IP-->
-            <RowDefinition Height="12"/>    <!--4 Интервал-->
-            <RowDefinition Height="32"/>    <!--5 Поле для IP-->
-            <RowDefinition Height="12"/>    <!--6 Интервал-->
-            <RowDefinition Height="20"/>    <!--7 Текст Маска-->
-            <RowDefinition Height="12"/>    <!--8 Интервал-->
-            <RowDefinition Height="32"/>    <!--9 Поле маски-->
-            
+
+            <!--0 Зона перетаскивания-->
+            <RowDefinition Height="32"/>
+            <!--1 Заголовок-->
+            <RowDefinition Height="32"/>
+            <!--2 Интервал-->
+            <RowDefinition Height="24"/>
+            <!--3 Текст IP-->
+            <RowDefinition Height="20"/>
+            <!--4 Интервал-->
+            <RowDefinition Height="12"/>
+            <!--5 Поле для IP-->
+            <RowDefinition Height="32"/>
+            <!--6 Интервал-->
+            <RowDefinition Height="12"/>
+            <!--7 Текст Маска-->
+            <RowDefinition Height="20"/>
+            <!--8 Интервал-->
+            <RowDefinition Height="12"/>
+            <!--9 Поле маски-->
+            <RowDefinition Height="32"/>
+            <!--10 Интервал-->
+            <RowDefinition Height="24"/>
+            <!--11 Зона вывода инфы-->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!--#endregion-->
-        
+
         <!--#region 0 Зона перетаскивания -->
         <Grid Grid.Row="0" 
               Grid.Column="0" 
-              Grid.ColumnSpan="3">
+              Grid.ColumnSpan="3"
+              shell:WindowChrome.IsHitTestVisibleInChrome="True">
+
+
+            <!--#region Стили кнопок -->
+            <Grid.Resources>
+
+                <!-- Базовый стиль для всех кнопок управления -->
+                <Style x:Key="WindowControlButtonStyle" TargetType="Button">
+                    <Setter Property="FontFamily" Value="Marlett"/>
+                    <Setter Property="Width" Value="46"/>
+                    <Setter Property="Height" Value="32"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Foreground" Value="#333333"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="buttonBorder" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <!-- Эффект наведения для обычных кнопок (Свернуть/Развернуть) -->
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="buttonBorder" Property="Background" Value="#E5E5E5"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+
+                <!-- Специальный стиль для кнопки закрытия (наследует базовый) -->
+                <Style x:Key="CloseWindowButtonStyle" TargetType="Button" BasedOn="{StaticResource WindowControlButtonStyle}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="buttonBorder" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <!-- Эффект наведения для кнопки Закрыть (Красный фон, белый текст) -->
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="buttonBorder" Property="Background" Value="#E81123"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Grid.Resources>
+            <!--#endregion-->
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Background="Transparent" shell:WindowChrome.IsHitTestVisibleInChrome="True"/>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+
+            <!--#region Кнопки управления окном -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True" >
 
                 <!-- Свернуть -->
-                <Button Content="0" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0">
+                <Button Content="0" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0" Style="{StaticResource WindowControlButtonStyle}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <localcmd:MinimizeWindowAction/>
+                            <localcmd:MinimizeWindowCommand/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
 
                 <!-- Развернуть -->
-                <Button Content="1" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0">
+                <Button Content="1" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0" Style="{StaticResource WindowControlButtonStyle}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <localcmd:MaximizeWindowAction/>
+                            <localcmd:MaximizeWindowCommand/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
 
                 <!-- Закрыть -->
-                <Button Content="r" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0">
+                <Button Content="r" FontFamily="Marlett" Width="46" Height="32" Background="Transparent" BorderThickness="0" Style="{StaticResource CloseWindowButtonStyle}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <localcmd:CloseWindowAction/>
+                            <localcmd:CloseWindowCommand/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
 
             </StackPanel>
         </Grid>
+        <!--#endregion-->
 
         <!--#endregion-->
 
@@ -105,20 +175,24 @@
         <!--#endregion-->
 
         <!--#region 3 Текст IP -->
-        <TextBlock Grid.Row="3" 
-                   Grid.Column="1" 
-                   Text="IP"  
-                   Style="{StaticResource BodyStrongTextBlockStyle}"
-                   />
+        <Grid Grid.Row="3"
+              Grid.Column="1" >
+
+            <TextBlock Text="IP"  
+                     Style="{StaticResource BodyStrongTextBlockStyle}"
+            />
+        </Grid>
+
         <!--#endregion-->
 
         <!--#region 5 Поле для IP -->
         <Grid Grid.Row="5" Grid.Column="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="173"/>
+                <ColumnDefinition Width="234"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox  Grid.Column="0" InputScope="Url"/>
+            <TextBox  Grid.Column="0" Width="173" HorizontalAlignment="Left" />
+            <TextBlock Grid.Column="1" Text="ТУТ БИНДИНГ"/>
         </Grid>
         <!--#endregion-->
 
@@ -133,13 +207,51 @@
         <!--#region 9 Поле маски -->
         <Grid Grid.Row="9" Grid.Column="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="153"/>
+                <ColumnDefinition Width="234"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox  Grid.Column="0"/>
+            <TextBox Grid.Column="0" Width="153" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Column="1" Text="ТУТ БИНДИНГ"/>
         </Grid>
         <!--#endregion-->
 
+        <!--#region Инфа о сети -->
+        <Grid Grid.Row="11" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="12"/>
+
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Адрес сети:"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Широковещательный адрес:"/>
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Начальный адрес:"/>
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Конечный адрес:"/>
+            <TextBlock Grid.Row="6" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="Количество хостов:"/>
+            <TextBlock Grid.Row="8" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="Класс сети:"/>
+            <TextBlock Grid.Row="10" Grid.Column="2" Text="ТУТ БИНДИНГ"/>
+        </Grid>
+        <!--#endregion-->
 
     </Grid>
+
 </Window>
