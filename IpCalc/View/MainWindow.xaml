@@ -10,8 +10,8 @@
         xmlns:local="clr-namespace:IpCalc"
         xmlns:localcmd="clr-namespace:IpCalc.Commands"
         Title="Калькулятор IP" 
-        Height="450" 
-        Width="500"
+        MinHeight="492" 
+        MinWidth="500"
         AllowsTransparency="False"
         WindowStyle="None"
         ResizeMode="CanResize"
@@ -63,7 +63,9 @@
             <RowDefinition Height="32"/>
             <!--10 Интервал-->
             <RowDefinition Height="24"/>
-            <!--11 Зона вывода инфы-->
+            <!--11 Кнопки-->
+            <RowDefinition Height="32"/>
+            <!--12 Зона вывода инфы-->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!--#endregion-->
@@ -191,7 +193,7 @@
                 <ColumnDefinition Width="234"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox  Grid.Column="0" Width="173" HorizontalAlignment="Left" />
+            <TextBox Grid.Column="0" Width="173" HorizontalAlignment="Left" Text="{Binding InputIp}"/>
             <TextBlock Grid.Column="1" Text="{Binding BinaryIp}"/>
         </Grid>
         <!--#endregion-->
@@ -210,14 +212,14 @@
                 <ColumnDefinition Width="234"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Width="153" HorizontalAlignment="Left"/>
+            <TextBox Grid.Column="0" Width="153" HorizontalAlignment="Left" Text="{Binding InputMask}"/>
             <TextBlock Grid.Column="1" Text="{Binding BinaryMask}"/>
         </Grid>
         <!--#endregion-->
 
         <!--#region Инфа о сети -->
 
-        <Grid Grid.Row="11" Grid.Column="1">
+        <Grid Grid.Row="12" Grid.Column="1">
 
             <!--#region Разметка -->
             <Grid.ColumnDefinitions>
@@ -243,7 +245,7 @@
             <!--#endregion-->
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Адрес сети:"/>
-            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NetworkAddr}"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding BinaryIp}"/>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Широковещательный адрес:"/>
             <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BroadcastAddr}"/>
             <TextBlock Grid.Row="4" Grid.Column="0" Text="Начальный адрес:"/>
