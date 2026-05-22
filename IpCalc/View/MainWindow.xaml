@@ -190,11 +190,13 @@
         <!--#region 5 Поле для IP -->
         <Grid Grid.Row="5" Grid.Column="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="234"/>
+                <ColumnDefinition Width="173"/>
+                <ColumnDefinition Width="61"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Width="173" HorizontalAlignment="Left" Text="{Binding InputIp}"/>
-            <TextBlock Grid.Column="1" Text="{Binding BinaryIp}"/>
+            <TextBox Grid.Column="0" Text="{Binding InputIp}"/>
+            <TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}" VerticalAlignment="Center" FontSize="24" Foreground="IndianRed" Text="{Binding IpErrorMsg}"/>
+            <TextBlock Grid.Column="2" Text="{Binding BinaryIp}"/>
         </Grid>
         <!--#endregion-->
 
@@ -209,11 +211,13 @@
         <!--#region 9 Поле маски -->
         <Grid Grid.Row="9" Grid.Column="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="234"/>
+                <ColumnDefinition Width="153"/>
+                <ColumnDefinition Width="81"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Width="153" HorizontalAlignment="Left" Text="{Binding InputMask}"/>
-            <TextBlock Grid.Column="1" Text="{Binding BinaryMask}"/>
+            <TextBox Grid.Column="0" Text="{Binding InputMask}"/>
+            <TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}"  VerticalAlignment="Center" FontSize="16" Foreground="IndianRed" Text="{Binding MaskErrorMsg}"/>
+            <TextBlock Grid.Column="2" Text="{Binding BinaryMask}"/>
         </Grid>
         <!--#endregion-->
 

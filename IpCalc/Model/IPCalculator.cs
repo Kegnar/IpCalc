@@ -27,7 +27,7 @@ public static class IpCalculator
         }
         catch (ArgumentException)
         {
-            return (String.Empty, "Некорректный адрес");
+            return (String.Empty, "\uE783");
         }
     }
 
@@ -41,7 +41,7 @@ public static class IpCalculator
         }
         catch (ArgumentException)
         {
-            return (IPAddress.None, "Некорректный адрес");
+            return (IPAddress.None, "\uE783");
         }
     }
 }

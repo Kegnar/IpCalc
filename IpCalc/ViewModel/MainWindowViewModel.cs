@@ -14,7 +14,7 @@ public class MainWindowViewModel : BaseViewModel
             if (SetField(ref field, value))
             {
                 var (address, error) = IpCalculator.ValidateAddress(value);
-                ErrorMsg=error;
+                IpErrorMsg=error;
                 if (string.IsNullOrEmpty(error))
                 {
                     BinaryIp = address.AsBinary();
@@ -31,7 +31,7 @@ public class MainWindowViewModel : BaseViewModel
     public string BinaryIp
     {
         get => field;
-        set => SetField(ref field, value);
+        private set => SetField(ref field, value);
     }
     public string BinaryMask { get; set; }
 
@@ -42,7 +42,13 @@ public class MainWindowViewModel : BaseViewModel
     public string HostCount { get; set; }
     public string NetworkClass { get; set; }
 
-    public string ErrorMsg
+    public string IpErrorMsg
+    {
+        get => field;
+        set => SetField(ref field, value);
+    }
+
+    public string MaskErrorMsg
     {
         get => field;
         set => SetField(ref field, value);
