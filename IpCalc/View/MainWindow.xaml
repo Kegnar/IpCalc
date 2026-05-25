@@ -12,6 +12,8 @@
         Title="Калькулятор IP" 
         MinHeight="492" 
         MinWidth="500"
+        Height="500"
+        Width="650"
         AllowsTransparency="False"
         WindowStyle="None"
         ResizeMode="CanResize"

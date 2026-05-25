@@ -33,13 +33,28 @@ public static class IpCalculator
 
     public static (IPAddress address, string ErrorMsg) ValidateAddress(string ip)
     {
+        if(string.IsNullOrEmpty(ip)) throw new ArgumentException();
+        var ipStrings = ip.Split('.');
+        var ipBytes = new byte[4];
+
         try
         {
-            if (!IPAddress.TryParse(ip, out var ipAddress)) throw new ArgumentException();
+            for (int i = 0; i < 4; i++)
+            {
+                ipBytes[i] = Convert.ToByte(ipStrings[i]);
+            }
+
+
+            var ipAddress = new IPAddress(ipBytes);
+
 
             return (ipAddress, String.Empty);
         }
         catch (ArgumentException)
+        {
+            return (IPAddress.None, "\uE783");
+        }
+        catch (OverflowException)
         {
             return (IPAddress.None, "\uE783");
         }
