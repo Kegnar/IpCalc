@@ -197,7 +197,7 @@
                 <ColumnDefinition Width="61"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding InputIp }">
+            <TextBox Grid.Column="0" Text="{Binding InputIp, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Style>
                     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                         <Style.Triggers>
@@ -230,8 +230,21 @@
                 <ColumnDefinition Width="81"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding InputMask}"/>
-            <TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}"  VerticalAlignment="Center" FontSize="16" Foreground="IndianRed" Text="{Binding MaskErrorMsg}"/>
+            <TextBox Grid.Column="0" Text="{Binding InputMask, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsMaskInputEnabled}" >
+                <TextBox.Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Style.Triggers>
+                            <!-- Если у свойства есть ошибка, показываем её в ToolTip -->
+                            <Trigger Property="Validation.HasError" Value="True">
+                                <Setter Property="ToolTip" 
+                                        Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+
+            <!--<TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}"  VerticalAlignment="Center" FontSize="16" Foreground="IndianRed" Text="{Binding MaskErrorMsg}"/>-->
             <TextBlock Grid.Column="2" Text="{Binding BinaryMask}"/>
         </Grid>
         <!--#endregion-->

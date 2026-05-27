@@ -41,7 +41,7 @@ public static class IpCalculator
         var parts = input.Split('/');
         var ipPart = parts[0];
 
-        // 1. Валидация самого IP
+        //  Валидация самого IP
         if (!IPAddress.TryParse(ipPart, out var ipAddress))
             return (IPAddress.None, null, "Некорректный IP-адрес");
 
@@ -49,7 +49,7 @@ public static class IpCalculator
         if (ipAddress.AddressFamily != AddressFamily.InterNetwork)
             return (IPAddress.None,null ,"Не является адресом IPv4");
 
-        // 2. Если есть слэш, проверяем CIDR
+        // Если есть слэш, проверяем CIDR
         if (parts.Length > 1)
         {
             var cidrPart = parts[1];
@@ -68,12 +68,9 @@ public static class IpCalculator
         public static (IPAddress address, string ErrorMsg ) ValidateMask(string mask)
         {
             // 1. Проверяем базовый формат IP-адреса
-            if (!IPAddress.TryParse(mask, out IPAddress ipAddress))
-                return (IPAddress.None, "Введите маску");
-
-            // Ограничиваем проверку только IPv4 адресами
-            if (ipAddress.AddressFamily != AddressFamily.InterNetwork)
+            if (!IPAddress.TryParse(mask, out IPAddress ipAddress) || ipAddress.AddressFamily != AddressFamily.InterNetwork)
                 return (IPAddress.None, "Не является маской IPv4");
+
 
             // 2. Преобразуем в 32-битное число (с учетом Reverse для правильного порядка байт)
             byte[] bytes = ipAddress.GetAddressBytes();
@@ -82,18 +79,17 @@ public static class IpCalculator
                 Array.Reverse(bytes);
             }
             uint maskValue = BitConverter.ToUInt32(bytes, 0);
-            //TODO: Поправить возвращаемое значение
+            
 
-            // Маска 0.0.0.0 часто считается невалидной (или валидной в редких контекстах)
-            if (maskValue == 0) return false;
-
+        
             // 3. Битовый трюк: инвертируем маску и прибавляем 1.
             // Если маска корректна, результат операции (NOT mask) + 1 будет равен степени двойки.
             // Операция (x & (x - 1)) == 0 проверяет, является ли число степенью двойки.
             uint inverted = ~maskValue;
             uint nextPowerOfTwo = inverted + 1;
 
-            return (nextPowerOfTwo & (nextPowerOfTwo - 1)) == 0;
+            if ((nextPowerOfTwo & (nextPowerOfTwo - 1)) == 0) return (ipAddress,String.Empty);
+            return (IPAddress.None, "Некорректная маска");
         }
     
 

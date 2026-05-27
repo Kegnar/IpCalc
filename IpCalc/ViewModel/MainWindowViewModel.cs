@@ -8,7 +8,7 @@ public class MainWindowViewModel : BaseViewModel
 
     public bool IsMaskInputEnabled
     {
-        get => field;
+        get => field = true;
         private set => SetField(ref field, value);
     }
 
@@ -42,7 +42,34 @@ public class MainWindowViewModel : BaseViewModel
         get => field;
         private set => SetField(ref field, value);
     }
-    public string BinaryMask { get; set; }
+
+    public string InputMask
+    {
+        get => field;
+        set
+        {
+            if (SetField(ref field, value))
+            {
+                var (mask, error) = IpCalculator.ValidateMask(value);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    AddError(error);
+                    BinaryMask = String.Empty;
+                }
+                else
+                {
+                    ClearErrors();
+                    BinaryMask = mask.AsBinary();
+                }
+            }
+        }
+    }
+
+    public string BinaryMask
+    {
+        get => field;
+        private set => SetField(ref field, value);
+    }
 
     public string NetworkAddr { get; set; }
     public string BroadcastAddr { get; set; }
