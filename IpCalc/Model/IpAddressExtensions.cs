@@ -3,7 +3,7 @@
 namespace IpCalc.Model;
 /// <summary>
 /// Расширение класса System.Net.IPAddress.
-/// Возвращает двоинчное представление IP
+/// Возвращает двоинчное представление адреса или маски
 /// </summary>
 public static class IpAddressExtensions
 {

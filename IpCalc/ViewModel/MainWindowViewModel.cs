@@ -6,6 +6,12 @@ namespace IpCalc.ViewModel;
 public class MainWindowViewModel : BaseViewModel
 {
 
+    public bool IsMaskInputEnabled
+    {
+        get => field;
+        private set => SetField(ref field, value);
+    }
+
     public string InputIp
     {
         get => field;
@@ -13,20 +19,23 @@ public class MainWindowViewModel : BaseViewModel
         {
             if (SetField(ref field, value))
             {
-                var (address, error) = IpCalculator.ValidateAddress(value);
-                IpErrorMsg=error;
-                if (string.IsNullOrEmpty(error))
+                var (address, cidr, error) = IpCalculator.ValidateAddress(value);
+
+                if (!string.IsNullOrEmpty(error))
                 {
-                    BinaryIp = address.AsBinary();
+                    AddError(error); // Автоматически запишет ошибку для "InputIp"
+                    BinaryIp = string.Empty;
+                    IsMaskInputEnabled = true;
                 }
                 else
                 {
-                    BinaryIp = string.Empty;
+                    ClearErrors(); // Автоматически очистит ошибки для "InputIp"
+                    BinaryIp = address.AsBinary();
+                    IsMaskInputEnabled = !cidr.HasValue;
                 }
             }
         }
     }
-
 
     public string BinaryIp
     {
@@ -42,18 +51,7 @@ public class MainWindowViewModel : BaseViewModel
     public string HostCount { get; set; }
     public string NetworkClass { get; set; }
 
-    public string IpErrorMsg
-    {
-        get => field;
-        set => SetField(ref field, value);
-    }
-
-    public string MaskErrorMsg
-    {
-        get => field;
-        set => SetField(ref field, value);
-    }
-
+    
 
 
 }

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+
 using System.Net.Sockets;
 
 namespace IpCalc.Model;
@@ -27,36 +28,73 @@ public static class IpCalculator
         }
         catch (ArgumentException)
         {
-            return (String.Empty, "\uE783");
+            return (String.Empty, nameof(AddressAsBinary)); //TODO: придумать что-нибудь вменяемое
         }
     }
 
-    public static (IPAddress address, string ErrorMsg) ValidateAddress(string ip)
+    public static (IPAddress address, int? cidr, string ErrorMsg) ValidateAddress(string input)
     {
-        if(string.IsNullOrEmpty(ip)) throw new ArgumentException();
-        var ipStrings = ip.Split('.');
-        var ipBytes = new byte[4];
+        if (string.IsNullOrWhiteSpace(input))
+            return (IPAddress.None, null, "Введите адрес");
 
-        try
+        // Разделяем на IP и маску CIDR
+        var parts = input.Split('/');
+        var ipPart = parts[0];
+
+        // 1. Валидация самого IP
+        if (!IPAddress.TryParse(ipPart, out var ipAddress))
+            return (IPAddress.None, null, "Некорректный IP-адрес");
+
+         // Ограничиваем проверку только IPv4 адресами
+        if (ipAddress.AddressFamily != AddressFamily.InterNetwork)
+            return (IPAddress.None,null ,"Не является адресом IPv4");
+
+        // 2. Если есть слэш, проверяем CIDR
+        if (parts.Length > 1)
         {
-            for (int i = 0; i < 4; i++)
+            var cidrPart = parts[1];
+            if (int.TryParse(cidrPart, out int cidrValue) && cidrValue is >= 0 and <= 32)
             {
-                ipBytes[i] = Convert.ToByte(ipStrings[i]);
+                return (ipAddress, cidrValue, string.Empty);
             }
-
-
-            var ipAddress = new IPAddress(ipBytes);
-
-
-            return (ipAddress, String.Empty);
+            return (IPAddress.None, null, "Некорректная маска CIDR (0-32)");
         }
-        catch (ArgumentException)
-        {
-            return (IPAddress.None, "\uE783");
-        }
-        catch (OverflowException)
-        {
-            return (IPAddress.None, "\uE783");
-        }
+
+        // Если слэша нет, возвращаем только адрес
+        return (ipAddress, null, string.Empty);
     }
+
+ 
+        public static (IPAddress address, string ErrorMsg ) ValidateMask(string mask)
+        {
+            // 1. Проверяем базовый формат IP-адреса
+            if (!IPAddress.TryParse(mask, out IPAddress ipAddress))
+                return (IPAddress.None, "Введите маску");
+
+            // Ограничиваем проверку только IPv4 адресами
+            if (ipAddress.AddressFamily != AddressFamily.InterNetwork)
+                return (IPAddress.None, "Не является маской IPv4");
+
+            // 2. Преобразуем в 32-битное число (с учетом Reverse для правильного порядка байт)
+            byte[] bytes = ipAddress.GetAddressBytes();
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+            uint maskValue = BitConverter.ToUInt32(bytes, 0);
+            //TODO: Поправить возвращаемое значение
+
+            // Маска 0.0.0.0 часто считается невалидной (или валидной в редких контекстах)
+            if (maskValue == 0) return false;
+
+            // 3. Битовый трюк: инвертируем маску и прибавляем 1.
+            // Если маска корректна, результат операции (NOT mask) + 1 будет равен степени двойки.
+            // Операция (x & (x - 1)) == 0 проверяет, является ли число степенью двойки.
+            uint inverted = ~maskValue;
+            uint nextPowerOfTwo = inverted + 1;
+
+            return (nextPowerOfTwo & (nextPowerOfTwo - 1)) == 0;
+        }
+    
+
 }

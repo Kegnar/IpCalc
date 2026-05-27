@@ -33,6 +33,7 @@
         <vm:MainWindowViewModel/>
     </Window.DataContext>
 
+
     <Grid>
 
         <!--#region Глобальная разметка. Не трогать без необходимости! -->
@@ -196,8 +197,20 @@
                 <ColumnDefinition Width="61"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding InputIp}"/>
-            <TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}" VerticalAlignment="Center" FontSize="24" Foreground="IndianRed" Text="{Binding IpErrorMsg}"/>
+            <TextBox Grid.Column="0" Text="{Binding InputIp }">
+                <TextBox.Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Style.Triggers>
+                            <!-- Если у свойства есть ошибка, показываем её в ToolTip -->
+                            <Trigger Property="Validation.HasError" Value="True">
+                                <Setter Property="ToolTip" 
+                                        Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <!--<TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}" VerticalAlignment="Center" FontSize="24" Foreground="IndianRed" Text="{Binding IpErrorMsg}"/>-->
             <TextBlock Grid.Column="2" Text="{Binding BinaryIp}"/>
         </Grid>
         <!--#endregion-->
@@ -251,7 +264,7 @@
             <!--#endregion-->
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Адрес сети:"/>
-            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding BinaryIp}"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NetworkAddr}"/>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Широковещательный адрес:"/>
             <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BroadcastAddr}"/>
             <TextBlock Grid.Row="4" Grid.Column="0" Text="Начальный адрес:"/>
