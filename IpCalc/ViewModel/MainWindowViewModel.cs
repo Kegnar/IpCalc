@@ -8,7 +8,7 @@ public class MainWindowViewModel : BaseViewModel
 
     public bool IsMaskInputEnabled
     {
-        get => field = true;
+        get => field;
         private set => SetField(ref field, value);
     }
 

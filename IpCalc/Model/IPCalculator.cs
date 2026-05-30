@@ -6,18 +6,7 @@ namespace IpCalc.Model;
 
 public static class IpCalculator
 {
-    //public static (string Network, string Broadcast, string StartAddr, string EndAddr, string Hosts, string NetworkClass) Calculate(string ip, string mask)
-    //{
-    //    if (!IPAddress.TryParse(ip, out var IpAddr)) throw new ArgumentException("Некорректный адрес");
-    //    if (!IPAddress.TryParse(mask, out var netMask)) throw new ArgumentException("Некорректная маска");
 
-    //    var ipBytes = IpAddr.GetAddressBytes();
-    //    var maskBytes = netMask.GetAddressBytes();
-
-    //    if ()
-
-    //        return (networkStr, broadcastStr, startIpStr, endIpStr, hostsStr, networkClassStr);
-    //}
     public static (string binaryAddr, string ErrorMsg) AddressAsBinary(string ip)
     {
         try
@@ -37,22 +26,26 @@ public static class IpCalculator
         if (string.IsNullOrWhiteSpace(input))
             return (IPAddress.None, null, "Введите адрес");
 
-        // Разделяем на IP и маску CIDR
-        var parts = input.Split('/');
+        // Ограничиваем разделение: максимум 2 части. 
+        // Если слэшей больше, parts.Length всё равно будет равен 2, и вторая часть завалит валидацию CIDR.
+        var parts = input.Split('/', 2);
         var ipPart = parts[0];
 
-        //  Валидация самого IP
-        if (!IPAddress.TryParse(ipPart, out var ipAddress))
-            return (IPAddress.None, null, "Некорректный IP-адрес");
+        // 1. Валидация базового формата IP
+        if (!IPAddress.TryParse(ipPart, out var ipAddress) || ipAddress.AddressFamily != AddressFamily.InterNetwork)
+            return (IPAddress.None, null, "Не является адресом IPv4");
 
-         // Ограничиваем проверку только IPv4 адресами
-        if (ipAddress.AddressFamily != AddressFamily.InterNetwork)
-            return (IPAddress.None,null ,"Не является адресом IPv4");
+     
+        var octets = ipPart.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        if (octets.Length != 4 || octets.Any(o => !byte.TryParse(o, out _)))
+            return (IPAddress.None, null, "Некорректный формат IPv4 (должно быть 4 октета)");
 
-        // Если есть слэш, проверяем CIDR
+        // 3. Если есть слэш, проверяем CIDR
         if (parts.Length > 1)
         {
             var cidrPart = parts[1];
+
+            // Если после слэша пусто или ввели второй слэш (например, "24/32")
             if (int.TryParse(cidrPart, out int cidrValue) && cidrValue is >= 0 and <= 32)
             {
                 return (ipAddress, cidrValue, string.Empty);
@@ -64,33 +57,42 @@ public static class IpCalculator
         return (ipAddress, null, string.Empty);
     }
 
- 
-        public static (IPAddress address, string ErrorMsg ) ValidateMask(string mask)
+
+    public static (IPAddress address, string ErrorMsg) ValidateMask(string mask)
+    {
+        if (string.IsNullOrWhiteSpace(mask))
+            return (IPAddress.None, "Введите маску подсети");
+
+        // 1. Базовый парсинг в IP-адрес
+        if (!IPAddress.TryParse(mask, out IPAddress ipAddress) || ipAddress.AddressFamily != AddressFamily.InterNetwork)
+            return (IPAddress.None, "Не является маской IPv4");
+
+        // 2. Строгая проверка формата (ровно 4 числа без сокращений типа "255.255")
+        var octets = mask.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        if (octets.Length != 4 || octets.Any(o => !byte.TryParse(o, out _)))
+            return (IPAddress.None, "Некорректный формат (должно быть 4 октета, например 255.255.255.0)");
+
+        // 3. Преобразуем в 32-битное число
+        byte[] bytes = ipAddress.GetAddressBytes();
+        if (BitConverter.IsLittleEndian)
         {
-            // 1. Проверяем базовый формат IP-адреса
-            if (!IPAddress.TryParse(mask, out IPAddress ipAddress) || ipAddress.AddressFamily != AddressFamily.InterNetwork)
-                return (IPAddress.None, "Не является маской IPv4");
-
-
-            // 2. Преобразуем в 32-битное число (с учетом Reverse для правильного порядка байт)
-            byte[] bytes = ipAddress.GetAddressBytes();
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            uint maskValue = BitConverter.ToUInt32(bytes, 0);
-            
-
-        
-            // 3. Битовый трюк: инвертируем маску и прибавляем 1.
-            // Если маска корректна, результат операции (NOT mask) + 1 будет равен степени двойки.
-            // Операция (x & (x - 1)) == 0 проверяет, является ли число степенью двойки.
-            uint inverted = ~maskValue;
-            uint nextPowerOfTwo = inverted + 1;
-
-            if ((nextPowerOfTwo & (nextPowerOfTwo - 1)) == 0) return (ipAddress,String.Empty);
-            return (IPAddress.None, "Некорректная маска");
+            Array.Reverse(bytes);
         }
-    
+        uint maskValue = BitConverter.ToUInt32(bytes, 0);
+
+        // Сетевая маска не может состоять из одних нулей (0.0.0.0)
+        if (maskValue == 0)
+            return (IPAddress.None, "Маска подсети не может быть 0.0.0.0");
+
+        // 4. Битовая проверка (последовательность единиц, затем нулей)
+        uint inverted = ~maskValue;
+        uint nextPowerOfTwo = inverted + 1;
+
+        if ((nextPowerOfTwo & (nextPowerOfTwo - 1)) == 0)
+            return (ipAddress, string.Empty);
+
+        return (IPAddress.None, "Некорректная маска подсети (нарушена последовательность бит)");
+    }
+
 
 }
