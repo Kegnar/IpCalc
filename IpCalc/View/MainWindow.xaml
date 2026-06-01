@@ -35,7 +35,54 @@
 
 
     <Grid>
+        <Grid.Resources>
+            <Style x:Key="ValidatableTextBoxStyle" TargetType="TextBox" BasedOn="TextBox">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Padding" Value="5,0"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                <Setter Property="BorderThickness" Value="1"/>
 
+                <!-- Важно: убираем стандартную WPF-->
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <!-- Оборачиваем в Border, им мы и будем управлять -->
+                            <Border x:Name="border" 
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        CornerRadius="3">
+                                <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                
+                                <!-- Триггер наведения мыши -->
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#787878"/>
+                                </Trigger>
+                                <!-- Триггер фокуса (ClickBox активен) -->
+                                <Trigger Property="IsFocused" Value="true">
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#0078D7"/>
+                                    <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
+                                </Trigger>
+
+                                <!--Ошибка -->
+                                <Trigger Property="Validation.HasError" Value="true">
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#E81123"/>
+                                    <Setter TargetName="border" Property="Background" Value="#FDF0F1"/>
+                                    <Setter Property="ToolTip" 
+                                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
         <!--#region Глобальная разметка. Не трогать без необходимости! -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="16"/>
@@ -197,20 +244,7 @@
                 <ColumnDefinition Width="61"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding InputIp, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.Style>
-                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                        <Style.Triggers>
-                            <!-- Если у свойства есть ошибка, показываем её в ToolTip -->
-                            <Trigger Property="Validation.HasError" Value="True">
-                                <Setter Property="ToolTip" 
-                                        Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
-            <!--<TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}" VerticalAlignment="Center" FontSize="24" Foreground="IndianRed" Text="{Binding IpErrorMsg}"/>-->
+            <TextBox Grid.Column="0" Text="{Binding InputIp, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Grid.Column="2" Text="{Binding BinaryIp}"/>
         </Grid>
         <!--#endregion-->
@@ -230,22 +264,8 @@
                 <ColumnDefinition Width="81"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding InputMask, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsMaskInputEnabled}" >
-                <TextBox.Style>
-                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                        <Style.Triggers>
-                            <!-- Если у свойства есть ошибка, показываем её в ToolTip -->
-                            <Trigger Property="Validation.HasError" Value="True">
-                                <Setter Property="ToolTip" 
-                                        Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
-
-            <!--<TextBlock Grid.Column="1" FontFamily="{StaticResource SymbolThemeFontFamily}"  VerticalAlignment="Center" FontSize="16" Foreground="IndianRed" Text="{Binding MaskErrorMsg}"/>-->
-            <TextBlock Grid.Column="2" Text="{Binding BinaryMask}"/>
+            <TextBox Grid.Column="0" Text="{Binding InputMask, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsMaskInputEnabled}"/>
+            <TextBlock Grid.Column="2" Text="{Binding BinaryMask, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
         <!--#endregion-->
 
