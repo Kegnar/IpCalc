@@ -54,9 +54,8 @@ public abstract class BaseViewModel : INotifyPropertyChanged, INotifyDataErrorIn
     protected void ClearErrors([CallerMemberName] string? propertyName = null)
     {
         if(string.IsNullOrEmpty(propertyName)) return;
-        if (_errors.ContainsKey(propertyName))
+        if (_errors.Remove(propertyName))
         {
-            _errors.Remove(propertyName);
             ErrorsChanged?.Invoke(this,new DataErrorsChangedEventArgs(propertyName));
             OnPropertyChanged(nameof(propertyName));
         }

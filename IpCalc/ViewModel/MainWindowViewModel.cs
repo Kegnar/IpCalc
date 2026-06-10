@@ -1,13 +1,38 @@
 ﻿using System.Net;
+using System.Net.NetworkInformation;
 using IpCalc.Model;
 
 namespace IpCalc.ViewModel;
 
 public class MainWindowViewModel : BaseViewModel
 {
+    public string InputMask
+    {
+        get => field;
+        set
+        {
+            if (SetField(ref field, value))
+            {
+                var (mask, error) = IpCalculator.ValidateMask(value);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    AddError(error);
+                    BinaryMask = string.Empty;
+                }
+                else
+                {
+                    ClearErrors();
+
+                    BinaryMask = mask.AsBinary();
+                    RecalculateNetwork();
+                }
+            }
+        }
+    }
+
     public string InputIp
     {
-        get;
+        get => field;
         set
         {
             if (SetField(ref field, value))
@@ -16,9 +41,10 @@ public class MainWindowViewModel : BaseViewModel
 
                 if (!string.IsNullOrEmpty(error))
                 {
-                    AddError(error); 
+                    AddError(error);
                     BinaryIp = string.Empty;
                     ClearCalculatedFields();
+
                 }
                 else
                 {
@@ -28,54 +54,27 @@ public class MainWindowViewModel : BaseViewModel
                     if (cidr.HasValue)
                     {
                         var (mask, _) = IpCalculator.CidrToSubnet(cidr.Value);
-                        InputMask = mask.ToString();
+                        InputMask = mask.ToString(); // Записываем напрямую в поле, в обход триггеров
+                        OnPropertyChanged(nameof(InputMask));
                         RecalculateNetwork();
                     }
                     else
                     {
-                        if(value.Split('.').Length == 4)
-                        {
-                            InputMask = IpCalculator.GetDefaultMaskByClass(address).ToString();
-                        }
-                        RecalculateNetwork();
-                    }
-                    
-                }
-            }
-        }
-    }
 
-    public string InputMask
-    {
-        get;
-        set
-        {
-            if (SetField(ref field, value))
-            {
-                var (mask, error) = IpCalculator.ValidateMask(value);
-                if (!string.IsNullOrEmpty(error))
-                {
-                    AddError(error);
-                    BinaryMask = String.Empty;
-                    ClearCalculatedFields();
-                }
-                else
-                {
-                    ClearErrors();
-                    BinaryMask = mask.AsBinary();
-                    if (IsMaskInputEnabled)
-                    {
+                        InputMask = IpCalculator.GetDefaultMaskByClass(address).ToString();
+                        OnPropertyChanged(nameof(InputMask));
                         RecalculateNetwork();
                     }
                 }
+                OnPropertyChanged(nameof(IsMaskInputEnabled));
             }
         }
     }
 
     #region Результаты расчетов в UI
-
+    // Ленивое свойство - работает без явного сеттера
     public bool IsMaskInputEnabled => !string.IsNullOrEmpty(InputIp) && !InputIp.Contains('/');
-   
+
     public string BinaryIp
     {
         get;
@@ -118,7 +117,6 @@ public class MainWindowViewModel : BaseViewModel
     }
     #endregion
 
-
     #region Вызовы модели
     private void RecalculateNetwork()
     {
@@ -146,7 +144,7 @@ public class MainWindowViewModel : BaseViewModel
         EndAddr = string.Empty;
         HostCount = string.Empty;
         NetworkClass = string.Empty;
-    } 
+    }
     #endregion
 
 }

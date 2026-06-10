@@ -6,28 +6,13 @@ namespace IpCalc.Model;
 
 public static class IpCalculator
 {
-
-    public static (string binaryAddr, string ErrorMsg) AddressAsBinary(string ip)
-    {
-        try
-        {
-            if (!IPAddress.TryParse(ip, out var ipAddress)) throw new ArgumentException();
-
-            return (ipAddress.AsBinary(), String.Empty);
-        }
-        catch (ArgumentException)
-        {
-            return (String.Empty, nameof(AddressAsBinary)); //TODO: придумать что-нибудь вменяемое
-        }
-    }
-
     public static (IPAddress address, int? cidr, string ErrorMsg) ValidateAddress(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
             return (IPAddress.None, null, "Введите адрес");
 
         // Ограничиваем разделение: максимум 2 части. 
-        // Если слэшей больше, parts.Length всё равно будет равен 2, и вторая часть завалит валидацию CIDR.
+        // Если слэшей больше, parts.Length всё равно будет равен 2, и вторая часть не завалит валидацию CIDR.
         var parts = input.Split('/', 2);
         var ipPart = parts[0];
 
@@ -100,9 +85,7 @@ public static class IpCalculator
         if (cidrValue < 1 || cidrValue > 32)
             return (IPAddress.None, "Недопустимое значение CIDR");
 
-        // Крайний случай для /0, чтобы избежать сдвига uint на 32 бита (что в C# вернет uint.MaxValue)
-        if (cidrValue == 0) return (IPAddress.Any, string.Empty);
-
+ 
         // Вычисляем маску путем сдвига бит и инвертирования
         uint mask = uint.MaxValue << (32 - cidrValue);
         byte[] bytes = BitConverter.GetBytes(mask);
@@ -114,6 +97,14 @@ public static class IpCalculator
         return (new IPAddress(bytes), string.Empty);
     }
 
+    #region Информация о сети
+
+    /// <summary>
+    /// Возвращает адрес сети по имеющимся хосту и маске.
+    /// </summary>
+    /// <param name="ip">Адрес хоста.</param>
+    /// <param name="mask">Маска сети.</param>
+    /// <returns>Адрес сети в виде объекта IPAddress.</returns>
     public static IPAddress GetNetworkAddress(IPAddress ip, IPAddress mask)
     {
         byte[] ipBytes = ip.GetAddressBytes();
@@ -170,7 +161,7 @@ public static class IpCalculator
         {
             32 => 1,
             31 => 2,
-            _ => Math.Pow(2, 32 - GetCidrFromMask(mask)) - 2
+            _ => Math.Pow(2, 32 - cidr) - 2
         };
     }
 
@@ -178,14 +169,15 @@ public static class IpCalculator
     {
         return ip.GetAddressBytes()[0] switch
         {
-            >= 1 and <= 126   => "A",
-            127               => "A (Loopback)",
+            >= 1 and <= 126 => "A",
+            127 => "A (Loopback)",
             >= 128 and <= 191 => "B",
             >= 192 and <= 223 => "C",
             >= 224 and <= 239 => "D (Multicast)",
-            _                 => "E (Experimental)"
+            _ => "E (Experimental)"
         };
 
+    #endregion
 
     }
     private static int GetCidrFromMask(IPAddress mask)
@@ -206,7 +198,7 @@ public static class IpCalculator
     public static IPAddress GetDefaultMaskByClass(IPAddress address)
     {
         if (address == null) return IPAddress.Parse("255.255.255.0");
-        byte firstByte = address.GetAddressBytes()[0];
+   
 
         return address.GetAddressBytes()[0] switch
         {

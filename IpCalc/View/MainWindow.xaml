@@ -36,13 +36,13 @@
 
     <Grid>
         <Grid.Resources>
-            <Style x:Key="ValidatableTextBoxStyle" TargetType="TextBox" BasedOn="TextBox">
-                <Setter Property="Height" Value="32"/>
+            <Style x:Key="ValidatableTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                <!--<Setter Property="Height" Value="32"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="Padding" Value="5,0"/>
                 <Setter Property="Background" Value="White"/>
                 <Setter Property="BorderBrush" Value="#CCCCCC"/>
-                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderThickness" Value="1"/>-->
 
                 <!-- Важно: убираем стандартную WPF-->
                 <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
@@ -73,7 +73,6 @@
                                 <!--Ошибка -->
                                 <Trigger Property="Validation.HasError" Value="true">
                                     <Setter TargetName="border" Property="BorderBrush" Value="#E81123"/>
-                                    <Setter TargetName="border" Property="Background" Value="#FDF0F1"/>
                                     <Setter Property="ToolTip" 
                                             Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
                                 </Trigger>
@@ -244,7 +243,10 @@
                 <ColumnDefinition Width="61"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding InputIp, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Grid.Column="0" 
+                     Style="{StaticResource ValidatableTextBoxStyle}"
+                     Text="{Binding InputIp, UpdateSourceTrigger=PropertyChanged}"/>
+
             <TextBlock Grid.Column="2" Text="{Binding BinaryIp}"/>
         </Grid>
         <!--#endregion-->
@@ -264,7 +266,11 @@
                 <ColumnDefinition Width="81"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" Text="{Binding InputMask, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsMaskInputEnabled}"/>
+            <TextBox Grid.Column="0" 
+                     Style="{StaticResource ValidatableTextBoxStyle}"
+                     Text="{Binding InputMask, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding IsMaskInputEnabled, Mode=OneWay}"/>
+
             <TextBlock Grid.Column="2" Text="{Binding BinaryMask, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
         <!--#endregion-->
